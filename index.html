@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calc 3D — Bambu Estudio</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background: #0f1117;
+  color: #e0e0e0;
+  min-height: 100vh;
+}
+
+/* ── HEADER ── */
+header {
+  background: #16181f;
+  border-bottom: 1px solid #2a2d3a;
+  padding: 14px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.brand { display: flex; align-items: center; gap: 12px; }
+.brand-logo {
+  width: 76px; height: 56px; object-fit: contain;
+  background: #fff; border-radius: 7px; padding: 3px;
+}
+.logo { font-size: 20px; font-weight: 700; color: #00d4aa; letter-spacing: 1px; }
+.sub  { font-size: 12px; color: #666; margin-top: 2px; }
+.btn-config {
+  background: transparent;
+  border: 1px solid #2a2d3a;
+  color: #888;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: all .2s;
+}
+.btn-config:hover { border-color: #00d4aa; color: #00d4aa; }
+
+/* ── TABS ── */
+.tabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 1px solid #2a2d3a;
+  background: #16181f;
+  padding: 0 32px;
+}
+.tab {
+  padding: 12px 24px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #555;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all .2s;
+}
+.tab.active { color: #00d4aa; border-bottom-color: #00d4aa; }
+
+/* ── LAYOUT PRINCIPAL ── */
+.main {
+  display: grid;
+  grid-template-columns: 1fr 360px;
+  gap: 20px;
+  max-width: 1100px;
+  margin: 24px auto;
+  padding: 0 20px;
+}
+
+/* ── PAINÉIS ── */
+.panel {
+  background: #16181f;
+  border: 1px solid #2a2d3a;
+  border-radius: 12px;
+  padding: 24px;
+}
+.panel-title {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #00d4aa;
+  margin-bottom: 16px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #2a2d3a;
+}
+
+/* ── FIELDS ── */
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+.span2 { grid-column: span 2; }
+
+.field { display: flex; flex-direction: column; gap: 5px; }
+.field label {
+  font-size: 11px;
+  font-weight: 600;
+  color: #777;
+  text-transform: uppercase;
+  letter-spacing: 0.7px;
+}
+.iw {
+  display: flex;
+  align-items: center;
+  background: #0f1117;
+  border: 1px solid #2a2d3a;
+  border-radius: 7px;
+  overflow: hidden;
+  transition: border-color .2s;
+}
+.iw:focus-within { border-color: #00d4aa; }
+.iw input, .iw select {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #e0e0e0;
+  font-size: 14px;
+  padding: 0 11px;
+  height: 38px;
+}
+.iw select { cursor: pointer; }
+option { background: #16181f; }
+.pfx, .sfx {
+  padding: 0 9px;
+  font-size: 12px;
+  color: #555;
+  background: #1a1d27;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+}
+
+/* ── TOGGLE PINTURA ── */
+.toggle-row { display: flex; gap: 6px; margin-bottom: 12px; }
+.tbtn {
+  flex: 1; padding: 8px 0; border: 1px solid #2a2d3a;
+  background: #0f1117; color: #666; border-radius: 7px;
+  cursor: pointer; font-size: 12px; font-weight: 600; text-align: center;
+  transition: all .2s;
+}
+.tbtn.active { background: #00d4aa22; border-color: #00d4aa; color: #00d4aa; }
+
+/* ── SEÇÃO ── */
+.section { margin-top: 20px; padding-top: 16px; border-top: 1px solid #2a2d3a; }
+.section-lbl {
+  font-size: 10px; font-weight: 700; letter-spacing: 1.5px;
+  text-transform: uppercase; color: #555; margin-bottom: 12px;
+}
+
+/* ── RESUMO ── */
+.summary {
+  background: #16181f;
+  border: 1px solid #2a2d3a;
+  border-radius: 12px;
+  padding: 24px;
+  position: sticky;
+  top: 20px;
+  height: fit-content;
+}
+.price-hero {
+  text-align: center;
+  margin-bottom: 20px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid #2a2d3a;
+}
+.price-hero .lbl { font-size: 11px; color: #666; margin-bottom: 4px; }
+.price-hero .amt { font-size: 44px; font-weight: 700; color: #fff; }
+.price-hero .amt em { font-size: 20px; color: #00d4aa; font-style: normal; }
+.price-hero .pnome { font-size: 12px; color: #666; margin-top: 4px; }
+
+.bd { display: flex; flex-direction: column; gap: 9px; }
+.bi {
+  display: flex; justify-content: space-between;
+  font-size: 13px;
+}
+.bi .bn { color: #888; }
+.bi .bv { font-weight: 600; color: #ccc; }
+.bi.hi  .bv { color: #00d4aa; font-size: 15px; }
+.bi.sep { border-top: 1px solid #2a2d3a; padding-top: 9px; margin-top: 2px; }
+
+.platforms { margin-top: 18px; padding-top: 16px; border-top: 1px solid #2a2d3a; }
+.platforms h3 { font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: #444; margin-bottom: 10px; }
+.pi {
+  display: flex; justify-content: space-between; align-items: center;
+  background: #0f1117; border: 1px solid #2a2d3a; border-radius: 7px;
+  padding: 9px 13px; margin-bottom: 7px;
+}
+.pi .pn { font-size: 12px; color: #777; font-weight: 600; }
+.pi .pp { font-size: 15px; font-weight: 700; color: #fff; }
+.btn-budget {
+  width: 100%; margin-top: 14px; padding: 11px;
+  border: none; border-radius: 8px; cursor: pointer;
+  background: #00d4aa; color: #0f1117;
+  font-size: 13px; font-weight: 700;
+}
+.btn-budget:hover { background: #00b892; }
+.btn-control {
+  width: 100%; margin-top: 8px; padding: 10px;
+  border: 1px solid #2a2d3a; border-radius: 8px; cursor: pointer;
+  background: transparent; color: #aaa;
+  font-size: 13px; font-weight: 700;
+}
+.btn-control:hover { border-color: #00d4aa; color: #00d4aa; }
+.budget-box {
+  background: #fff; color: #222; border-radius: 8px;
+  padding: 22px; line-height: 1.6; font-size: 14px;
+}
+.budget-box h3 { color: #111; margin-bottom: 12px; }
+.budget-logo { display: block; width: 180px; max-width: 60%; margin: 0 auto 16px; }
+.budget-box .budget-total { font-size: 22px; font-weight: 700; margin-top: 12px; }
+
+/* ── MODAL CONFIG ── */
+.overlay {
+  display: none; position: fixed; inset: 0;
+  background: #000a; z-index: 100;
+  justify-content: center; align-items: center;
+}
+.overlay.open { display: flex; }
+.modal {
+  background: #16181f; border: 1px solid #2a2d3a;
+  border-radius: 14px; padding: 28px; width: 560px;
+  max-height: 90vh; overflow-y: auto;
+}
+.modal h2 { font-size: 15px; font-weight: 700; margin-bottom: 20px; color: #e0e0e0; }
+.modal-footer { display: flex; gap: 10px; margin-top: 24px; }
+.btn-save, .btn-cancel {
+  flex: 1; padding: 10px; border-radius: 8px;
+  cursor: pointer; font-size: 13px; font-weight: 600;
+  border: none; transition: all .2s;
+}
+.btn-save   { background: #00d4aa; color: #0f1117; }
+.btn-save:hover { background: #00b892; }
+.btn-cancel { background: transparent; border: 1px solid #2a2d3a; color: #888; }
+.btn-cancel:hover { border-color: #555; color: #aaa; }
+
+.saved-toast {
+  position: fixed; bottom: 24px; right: 24px;
+  background: #00d4aa; color: #0f1117;
+  padding: 10px 20px; border-radius: 8px;
+  font-weight: 700; font-size: 13px;
+  opacity: 0; transition: opacity .3s;
+  pointer-events: none;
+}
+.saved-toast.show { opacity: 1; }
+
+@media (max-width: 860px) {
+  .main { grid-template-columns: 1fr; }
+  .summary { position: static; }
+  .grid3 { grid-template-columns: 1fr 1fr; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <img class="brand-logo" src="{{ url_for('static', filename='logo-loja.jpeg') }}" alt="Huy Ideias">
+    <div>
+      <div class="logo">⬡ CALC 3D</div>
+      <div class="sub">Huy Ideias — Precificação</div>
+    </div>
+  </div>
+  <div class="sub">Custos fixos em CONFIGURACOES.txt</div>
+</header>
+
+<div class="main">
+
+  <!-- ══════════ FORMULÁRIO PRODUTO ══════════ -->
+  <div class="panel">
+    <div class="panel-title">Novo Produto</div>
+
+    <div class="field" style="margin-bottom:14px">
+      <label>Nome do Cliente</label>
+      <div class="iw">
+        <input type="text" id="cliente" placeholder="Ex: João da Silva">
+      </div>
+    </div>
+
+    <!-- Nome -->
+    <div class="field" style="margin-bottom:14px">
+      <label>Nome do Produto</label>
+      <div class="iw">
+        <input type="text" id="nome" placeholder="Ex: Dragão articulado" oninput="calc()">
+      </div>
+    </div>
+
+    <div class="field" style="margin-bottom:14px">
+      <label>Quantidade</label>
+      <div class="iw">
+        <input type="number" id="quantidade" value="1" min="1" step="1" oninput="calc()">
+        <div class="sfx">un.</div>
+      </div>
+    </div>
+    <div class="sub" style="margin-bottom:14px">
+      Tempo e peso são por unidade. Embalagem e mão de obra são do pedido inteiro.
+    </div>
+
+    <!-- Produto básico -->
+    <div class="grid3">
+      <div class="field">
+        <label>Tempo por Unidade</label>
+        <div class="iw">
+          <input type="number" id="tempo" value="5" min="0" step="0.5" oninput="calc()">
+          <div class="sfx">h</div>
+        </div>
+      </div>
+      <div class="field">
+        <label>Peso por Unidade</label>
+        <div class="iw">
+          <input type="number" id="peso" value="35" min="0" oninput="calc()">
+          <div class="sfx">g</div>
+        </div>
+      </div>
+      <div class="field">
+        <label>Filamento (R$/kg)</label>
+        <div class="iw">
+          <div class="pfx">R$</div>
+          <input type="number" id="filamento_kg" value="120" min="0" step="1" oninput="calc()">
+        </div>
+      </div>
+      <div class="field">
+        <label>Embalagem do Pedido</label>
+        <div class="iw">
+          <div class="pfx">R$</div>
+          <input type="number" id="embalagem" value="3" min="0" step="0.5" oninput="calc()">
+        </div>
+      </div>
+      <div class="field">
+        <label>Outros Custos do Pedido</label>
+        <div class="iw">
+          <div class="pfx">R$</div>
+          <input type="number" id="taxa_extra" value="0" min="0" step="1" oninput="calc()">
+        </div>
+      </div>
+    </div>
+
+    <!-- Mão de obra impressão -->
+    <div class="section">
+      <div class="section-lbl">Mão de Obra — Impressão</div>
+      <div class="grid2">
+        <div class="field">
+          <label>Horas de Trabalho no Pedido</label>
+          <div class="iw">
+            <input type="number" id="mdo_horas" value="0.5" min="0" step="0.25" oninput="calc()">
+            <div class="sfx">h</div>
+          </div>
+        </div>
+        <div class="field">
+          <label>Valor por Hora</label>
+          <div class="iw">
+            <div class="pfx">R$</div>
+            <input type="number" id="mdo_valor" value="15" min="0" step="1" oninput="calc()">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pintura -->
+    <div class="section">
+      <div class="section-lbl">Pintura</div>
+      <div class="toggle-row" id="ptoggle">
+        <div class="tbtn active" data-val="none"     onclick="setPintura(this)">Sem Pintura</div>
+        <div class="tbtn"        data-val="simples"  onclick="setPintura(this)">Simples</div>
+        <div class="tbtn"        data-val="media"    onclick="setPintura(this)">Média</div>
+        <div class="tbtn"        data-val="complexa" onclick="setPintura(this)">Complexa</div>
+      </div>
+      <div id="pintura-campos" style="display:none">
+        <div class="field">
+          <label>Horas de Pintura no Pedido</label>
+          <div class="iw">
+            <input type="number" id="pintura_horas" value="1" min="0" step="0.25" oninput="calc()">
+            <div class="sfx">h</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Precificação -->
+    <div class="section">
+      <div class="section-lbl">Precificação</div>
+      <div class="grid2">
+        <div class="field">
+          <label>Markup</label>
+          <div class="iw">
+            <input type="number" id="markup" value="1.6" min="1" step="0.05" oninput="calc()">
+            <div class="sfx">×</div>
+          </div>
+        </div>
+        <div class="field">
+          <label>Margem</label>
+          <div class="iw" style="background:#1a1d27">
+            <input type="text" id="margem_display" readonly style="color:#00d4aa;font-weight:700">
+            <div class="sfx">%</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /panel -->
+
+  <!-- ══════════ RESUMO ══════════ -->
+  <div class="summary">
+    <div class="price-hero">
+      <div class="lbl">Preço Total do Pedido</div>
+      <div class="amt"><em>R$</em><span id="r-preco">0,00</span></div>
+      <div class="pnome" id="r-nome">—</div>
+      <div class="pnome" id="r-unitario">R$ 0,00 por unidade</div>
+    </div>
+
+    <div class="bd">
+      <div class="bi"><span class="bn">Material</span><span class="bv" id="r-material">—</span></div>
+      <div class="bi"><span class="bn">Energia</span><span class="bv" id="r-energia">—</span></div>
+      <div class="bi"><span class="bn">Depreciação</span><span class="bv" id="r-deprec">—</span></div>
+      <div class="bi"><span class="bn">Consumíveis</span><span class="bv" id="r-consumiveis">—</span></div>
+      <div class="bi"><span class="bn">Embalagem</span><span class="bv" id="r-embalagem">—</span></div>
+      <div class="bi"><span class="bn">Mão de obra</span><span class="bv" id="r-mdo">—</span></div>
+      <div class="bi"><span class="bn">Custo fixo dissolvido</span><span class="bv" id="r-fixo">—</span></div>
+      <div class="bi" id="r-pintura-row" style="display:none">
+        <span class="bn">Pintura</span><span class="bv" id="r-pintura">—</span>
+      </div>
+      <div class="bi"><span class="bn">Risco / Falhas</span><span class="bv" id="r-risco">—</span></div>
+      <div class="bi"><span class="bn">Taxa extra</span><span class="bv" id="r-taxa">—</span></div>
+      <div class="bi sep"><span class="bn">Custo Total</span><span class="bv" id="r-custo">—</span></div>
+      <div class="bi hi"><span class="bn">Lucro Líquido</span><span class="bv" id="r-lucro">—</span></div>
+    </div>
+
+    <div class="platforms">
+      <h3>Por Plataforma</h3>
+      <div class="pi"><span class="pn">🛒 Cliente Direto</span><span class="pp" id="r-direto">—</span></div>
+      <div class="pi"><span class="pn">🟠 Shopee</span><span class="pp" id="r-shopee">—</span></div>
+      <div class="pi"><span class="pn">🟡 Mercado Livre</span><span class="pp" id="r-ml">—</span></div>
+    </div>
+    <button class="btn-budget" type="button" onclick="openBudget()">Gerar Orçamento Básico</button>
+    <button class="btn-control" type="button" onclick="downloadControl()">Baixar Controle Completo (.txt)</button>
+  </div>
+
+</div><!-- /main -->
+
+<div class="overlay" id="budget-overlay" onclick="closeBudgetOutside(event)">
+  <div class="modal">
+    <h2>Orçamento Básico</h2>
+    <div class="budget-box" id="budget-content"></div>
+    <div class="modal-footer">
+      <button class="btn-cancel" type="button" onclick="closeBudget()">Fechar</button>
+      <button class="btn-cancel" type="button" onclick="copyBudget(this)">Copiar Texto</button>
+      <button class="btn-save" type="button" onclick="printBudget()">Imprimir</button>
+    </div>
+  </div>
+</div>
+
+<script>
+let pintura = 'none';
+let debounce;
+let lastResult = null;
+const logoUrl = "{{ url_for('static', filename='logo-loja.jpeg') }}";
+
+// ── Calc ──────────────────────────────────────────────────────
+function calc() {
+  clearTimeout(debounce);
+  debounce = setTimeout(doCalc, 180);
+}
+
+function doCalc() {
+  const payload = {
+    quantidade:  +id('quantidade').value  || 1,
+    peso:        +id('peso').value        || 0,
+    tempo:       +id('tempo').value       || 0,
+    filamento_kg:+id('filamento_kg').value|| 0,
+    embalagem:   +id('embalagem').value   || 0,
+    mdo_horas:   +id('mdo_horas').value   || 0,
+    mdo_valor:   +id('mdo_valor').value   || 0,
+    pintura,
+    pintura_horas:+id('pintura_horas').value || 0,
+    markup:      +id('markup').value      || 1,
+    taxa_extra:  +id('taxa_extra').value  || 0,
+  };
+
+  fetch('/api/calcular', {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify(payload)
+  })
+  .then(r => r.json())
+  .then(renderResult);
+}
+
+function renderResult(d) {
+  lastResult = d;
+  const nome = id('nome').value || '—';
+  id('r-nome').textContent    = nome;
+  id('r-preco').textContent   = fmt(d.preco);
+  id('r-unitario').textContent = fmtR(d.preco_unitario) + ' por unidade';
+  id('r-material').textContent    = fmtR(d.material);
+  id('r-energia').textContent     = fmtR(d.energia);
+  id('r-deprec').textContent      = fmtR(d.deprec);
+  id('r-consumiveis').textContent = fmtR(d.consumiveis);
+  id('r-embalagem').textContent   = fmtR(d.embalagem);
+  id('r-mdo').textContent         = fmtR(d.mdo_imp);
+  id('r-fixo').textContent        = fmtR(d.fixo_diss);
+  id('r-pintura').textContent     = fmtR(d.pintura);
+  id('r-risco').textContent       = fmtR(d.risco);
+  id('r-taxa').textContent        = fmtR(d.taxa_extra);
+  id('r-custo').textContent       = fmtR(d.custo_total);
+  id('r-lucro').textContent       = fmtR(d.lucro);
+  id('r-direto').textContent      = fmtR(d.preco) + unitSuffix(d.preco_unitario, d.quantidade);
+  id('r-shopee').textContent      = fmtR(d.shopee) + unitSuffix(d.shopee_unitario, d.quantidade);
+  id('r-ml').textContent          = fmtR(d.ml) + unitSuffix(d.ml_unitario, d.quantidade);
+
+  // Margem
+  const margem = d.preco > 0 ? ((d.lucro / d.preco) * 100).toFixed(1) : '0.0';
+  id('margem_display').value = margem;
+
+  id('r-pintura-row').style.display = pintura !== 'none' ? 'flex' : 'none';
+}
+
+// ── Pintura ───────────────────────────────────────────────────
+function setPintura(el) {
+  document.querySelectorAll('#ptoggle .tbtn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  pintura = el.dataset.val;
+  id('pintura-campos').style.display = pintura !== 'none' ? 'block' : 'none';
+  calc();
+}
+
+// ── Orçamento ─────────────────────────────────────────────────
+function budgetData() {
+  if (!lastResult) return null;
+  return {
+    cliente: id('cliente').value.trim() || 'Cliente',
+    produto: id('nome').value.trim() || 'Produto personalizado',
+    quantidade: lastResult.quantidade,
+    total: lastResult.preco,
+    pintura: pintura === 'none' ? '' : pintura,
+  };
+}
+
+function budgetText(d) {
+  return [
+    'HUY IDEIAS - ORÇAMENTO',
+    '',
+    'Cliente: ' + d.cliente,
+    'Produto personalizado: ' + d.produto,
+    'Acabamento: limpeza da peça',
+    ...(d.pintura ? ['Pintura: ' + pinturaLabel(d.pintura)] : []),
+    'Quantidade: ' + d.quantidade,
+    'Valor total: ' + fmtR(d.total),
+    '',
+    'Produção iniciada após a confirmação do pedido.',
+  ].join('\n');
+}
+
+function openBudget() {
+  const d = budgetData();
+  if (!d) return;
+  id('budget-content').innerHTML = `
+    <img class="budget-logo" src="${logoUrl}" alt="Huy Ideias">
+    <h3>Huy Ideias - Orçamento</h3>
+    <div><strong>Cliente:</strong> ${escapeHtml(d.cliente)}</div>
+    <div><strong>Produto personalizado:</strong> ${escapeHtml(d.produto)}</div>
+    <div><strong>Acabamento:</strong> limpeza da peça</div>
+    ${d.pintura ? `<div><strong>Pintura:</strong> ${pinturaLabel(d.pintura)}</div>` : ''}
+    <div><strong>Quantidade:</strong> ${d.quantidade}</div>
+    <div class="budget-total">Valor total: ${fmtR(d.total)}</div>
+    <div>Produção iniciada após a confirmação do pedido.</div>`;
+  id('budget-overlay').classList.add('open');
+}
+
+function closeBudget() { id('budget-overlay').classList.remove('open'); }
+function closeBudgetOutside(e) {
+  if (e.target === id('budget-overlay')) closeBudget();
+}
+
+function copyBudget(botao) {
+  const d = budgetData();
+  if (!d) return;
+  navigator.clipboard.writeText(budgetText(d)).then(() => {
+    const texto = botao.textContent;
+    botao.textContent = 'Copiado!';
+    setTimeout(() => botao.textContent = texto, 1500);
+  });
+}
+
+function printBudget() {
+  const conteudo = id('budget-content').innerHTML;
+  const janela = window.open('', '_blank', 'width=700,height=700');
+  janela.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8">
+    <title>Orçamento - Huy Ideias</title>
+    <style>body{font-family:Arial,sans-serif;padding:40px;color:#222;line-height:1.6}
+    h3{font-size:24px}.budget-logo{display:block;width:180px;margin-bottom:18px}
+    .budget-total{font-size:22px;font-weight:bold;margin-top:12px}</style>
+    </head><body>${conteudo}</body></html>`);
+  janela.document.close();
+  janela.focus();
+  janela.print();
+}
+
+// ── Controle interno ──────────────────────────────────────────
+function controlText() {
+  if (!lastResult) return '';
+  const quantidade = lastResult.quantidade;
+  const margem = lastResult.preco > 0
+    ? (lastResult.lucro / lastResult.preco * 100).toFixed(1).replace('.', ',')
+    : '0,0';
+  return [
+    'HUY IDEIAS - CONTROLE INTERNO',
+    '========================================',
+    'Gerado em: ' + new Date().toLocaleString('pt-BR'),
+    '',
+    'DADOS DO PEDIDO',
+    'Cliente: ' + (id('cliente').value.trim() || 'Não informado'),
+    'Produto: ' + (id('nome').value.trim() || 'Não informado'),
+    'Quantidade: ' + quantidade,
+    'Tempo por unidade: ' + id('tempo').value + ' h',
+    'Tempo estimado total: ' + fmtNumber((+id('tempo').value || 0) * quantidade) + ' h',
+    'Peso por unidade: ' + id('peso').value + ' g',
+    'Peso estimado total: ' + fmtNumber((+id('peso').value || 0) * quantidade) + ' g',
+    'Filamento: ' + fmtR(+id('filamento_kg').value || 0) + '/kg',
+    'Embalagem do pedido: ' + fmtR(+id('embalagem').value || 0),
+    'Outros custos do pedido: ' + fmtR(+id('taxa_extra').value || 0),
+    'Mão de obra: ' + id('mdo_horas').value + ' h a ' + fmtR(+id('mdo_valor').value || 0) + '/h',
+    'Pintura: ' + (pintura === 'none' ? 'Sem pintura' : pinturaLabel(pintura)),
+    ...(pintura !== 'none' ? ['Horas de pintura: ' + id('pintura_horas').value + ' h'] : []),
+    'Markup: ' + id('markup').value,
+    '',
+    'CUSTOS CALCULADOS',
+    'Material: ' + fmtR(lastResult.material),
+    'Energia: ' + fmtR(lastResult.energia),
+    'Depreciação: ' + fmtR(lastResult.deprec),
+    'Consumíveis: ' + fmtR(lastResult.consumiveis),
+    'Embalagem: ' + fmtR(lastResult.embalagem),
+    'Mão de obra: ' + fmtR(lastResult.mdo_imp),
+    'Custo fixo dissolvido: ' + fmtR(lastResult.fixo_diss),
+    'Pintura: ' + fmtR(lastResult.pintura),
+    'Risco / Falhas: ' + fmtR(lastResult.risco),
+    'Outros custos: ' + fmtR(lastResult.taxa_extra),
+    'Custo total: ' + fmtR(lastResult.custo_total),
+    '',
+    'PREÇOS E RESULTADO',
+    'Cliente direto - total: ' + fmtR(lastResult.preco),
+    'Cliente direto - unidade: ' + fmtR(lastResult.preco_unitario),
+    'Shopee - total: ' + fmtR(lastResult.shopee),
+    'Shopee - unidade: ' + fmtR(lastResult.shopee_unitario),
+    'Mercado Livre - total: ' + fmtR(lastResult.ml),
+    'Mercado Livre - unidade: ' + fmtR(lastResult.ml_unitario),
+    'Lucro estimado: ' + fmtR(lastResult.lucro),
+    'Margem: ' + margem + '%',
+    '',
+  ].join('\r\n');
+}
+
+function downloadControl() {
+  if (!lastResult) return;
+  const texto = controlText();
+  const blob = new Blob(['\uFEFF' + texto], {type: 'text/plain;charset=utf-8'});
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = 'controle-' + safeFilename(id('nome').value || 'produto') + '-' + isoDate() + '.txt';
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(link.href);
+}
+
+// ── Utils ─────────────────────────────────────────────────────
+function id(x) { return document.getElementById(x); }
+function fmt(v) {
+  return v.toFixed(2).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+}
+function fmtR(v) { return 'R$ ' + fmt(v); }
+function fmtNumber(v) {
+  return Number(v).toFixed(2).replace('.', ',');
+}
+function isoDate() { return new Date().toISOString().slice(0, 10); }
+function safeFilename(texto) {
+  return texto.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'produto';
+}
+function pinturaLabel(valor) {
+  return {simples: 'Simples', media: 'Média', complexa: 'Complexa'}[valor] || valor;
+}
+function escapeHtml(texto) {
+  const div = document.createElement('div');
+  div.textContent = texto;
+  return div.innerHTML;
+}
+function unitSuffix(v, quantidade) {
+  return quantidade > 1 ? ' (' + fmtR(v) + '/un.)' : '';
+}
+
+// Calcula na carga
+doCalc();
+</script>
+</body>
+</html>

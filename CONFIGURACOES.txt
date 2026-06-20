@@ -1,0 +1,48 @@
+# CONFIGURACOES FIXAS DO CALC 3D
+# Abra este arquivo no Bloco de Notas.
+# Altere somente os números depois do sinal = e salve o arquivo.
+# Você pode usar ponto ou vírgula nos valores decimais.
+
+# CUSTOS FIXOS MENSAIS
+ALUGUEL = 100
+ASSINATURAS_SOFTWARES = 100
+PLATAFORMAS_ECOMMERCE = 0
+TAXA_MEI = 0
+PUBLICIDADE_MINIMA_FIXA = 100
+AMORTIZACAO = 0
+CONDOMINIO = 0
+OUTROS_CUSTOS_FIXOS = 0
+# Quantas horas por mês a impressora fica disponível para produzir
+HORAS_PRODUTIVAS_MENSAIS = 360
+
+# PINTURA
+# Informe abaixo o preço total de cada embalagem comprada.
+TINTA_ACRILICA = 20
+PRIMER = 20
+VERNIZ = 20
+
+# Estimativa da fração das embalagens consumida em cada peça.
+# Exemplo: 5 significa 5% do valor total dos produtos acima.
+CONSUMO_PINTURA_SIMPLES_PCT = 5
+CONSUMO_PINTURA_MEDIA_PCT = 10
+CONSUMO_PINTURA_COMPLEXA_PCT = 20
+
+# Valor cobrado por cada hora de trabalho na pintura
+MAO_DE_OBRA_PINTURA_POR_HORA = 10
+
+# Reserva para impressões perdidas, falhas e desperdícios
+RISCO_FALHAS_PCT = 10
+
+# ENERGIA E IMPRESSORA
+CUSTO_KWH = 0,88
+VALOR_IMPRESSORA = 5000
+VIDA_UTIL_IMPRESSORA_HORAS = 10000
+# Estimativa média da Bambu Lab A1 durante uma impressão.
+# Para maior precisão, meça o consumo médio com uma tomada medidora.
+POTENCIA_IMPRESSORA_W = 100
+CONSUMIVEIS_POR_HORA = 0,50
+
+# TAXAS DE VENDA
+PERCENTUAL_SHOPEE = 20
+TAXA_FIXA_SHOPEE = 4
+PERCENTUAL_MERCADO_LIVRE = 19
