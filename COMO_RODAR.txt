@@ -11,7 +11,7 @@
    No terminal, navegue até esta pasta:
 
    cd "C:\Users\ADM\Desktop\Drive\Bambu Estudio\Site"
-   python app.py
+   python Precificacao.py
 
 3. Abrir no navegador:
    http://localhost:5000
@@ -20,9 +20,10 @@
   Arquivos do projeto
 ══════════════════════════════════════════
 
-app.py              → servidor Flask (não mexa)
+Precificacao.py     → servidor Flask e cálculos do site
 CONFIGURACOES.txt   → valores fixos (edite pelo Bloco de Notas)
 templates/index.html → a interface do site
+static/logo-loja.jpeg → logo usada no site e no orçamento
 
 ══════════════════════════════════════════
   O que fica salvo no CONFIGURACOES.txt?
@@ -37,11 +38,11 @@ templates/index.html → a interface do site
 - Percentual estimado desses produtos consumido por peça
 - Valor da mão de obra por hora de pintura
 - Percentual de reserva para riscos e falhas
+- Taxas da Shopee e Mercado Livre
 
 Para calcular kits, informe o tempo e o peso de uma unidade e escolha a
 quantidade no site. Embalagem, mão de obra, pintura e outros custos devem
 representar o pedido inteiro. O resultado mostra o total e o valor unitário.
-- Taxas da Shopee e Mercado Livre
 
 Para editar: abra CONFIGURACOES.txt no Bloco de Notas, altere somente
 os números depois do sinal = e salve. O site lê os valores automaticamente
