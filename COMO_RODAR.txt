@@ -1,32 +1,31 @@
 ══════════════════════════════════════════
-  CALC 3D — Como rodar o site local
+  CALC 3D — Site estático
 ══════════════════════════════════════════
 
-1. Instalar o Flask (só na primeira vez):
-   Abra o terminal (CMD ou PowerShell) e rode:
+Este projeto agora funciona com HTML, CSS e JavaScript puro.
+Não precisa Flask, Python ou servidor local para usar.
 
-   pip install flask
+Para abrir no seu computador:
 
-2. Iniciar o servidor:
-   No terminal, navegue até esta pasta:
+1. Abra a pasta do projeto.
+2. Dê dois cliques no arquivo:
 
-   cd "C:\Users\ADM\Desktop\Drive\Bambu Estudio\Site"
-   python Precificacao.py
+   index.html
 
-3. Abrir no navegador:
-   http://localhost:5000
+3. O site abrirá no navegador.
 
 ══════════════════════════════════════════
   Arquivos do projeto
 ══════════════════════════════════════════
 
-Precificacao.py     → servidor Flask e cálculos do site
-CONFIGURACOES.txt   → valores fixos (edite pelo Bloco de Notas)
-templates/index.html → a interface do site
+index.html            → interface, cálculos e botões do site
+config.js             → valores fixos usados nos cálculos
 static/logo-loja.jpeg → logo usada no site e no orçamento
+Precificacao.py       → versão antiga em Flask, mantida como backup
+CONFIGURACOES.txt     → versão antiga das configurações, mantida como backup
 
 ══════════════════════════════════════════
-  O que fica salvo no CONFIGURACOES.txt?
+  O que fica salvo no config.js?
 ══════════════════════════════════════════
 
 - Custo do KWh
@@ -40,10 +39,30 @@ static/logo-loja.jpeg → logo usada no site e no orçamento
 - Percentual de reserva para riscos e falhas
 - Taxas da Shopee e Mercado Livre
 
-Para calcular kits, informe o tempo e o peso de uma unidade e escolha a
-quantidade no site. Embalagem, mão de obra, pintura e outros custos devem
-representar o pedido inteiro. O resultado mostra o total e o valor unitário.
+Para editar os valores fixos, abra config.js no Bloco de Notas ou VS Code,
+altere somente os números depois dos nomes e salve.
 
-Para editar: abra CONFIGURACOES.txt no Bloco de Notas, altere somente
-os números depois do sinal = e salve. O site lê os valores automaticamente
-no próximo cálculo.
+══════════════════════════════════════════
+  Como publicar no GitHub Pages
+══════════════════════════════════════════
+
+1. Envie estes arquivos para o GitHub:
+
+   index.html
+   config.js
+   static/logo-loja.jpeg
+   COMO_RODAR.txt
+
+2. No repositório, entre em:
+
+   Settings → Pages
+
+3. Em "Build and deployment", escolha:
+
+   Source: Deploy from a branch
+   Branch: main
+   Folder: / (root)
+
+4. Clique em Save.
+
+Depois de alguns minutos, o GitHub mostrará o link público do site.
