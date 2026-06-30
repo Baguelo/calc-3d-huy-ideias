@@ -297,7 +297,7 @@ option { background: #16181f; }
       </div>
     </div>
     <div class="sub" style="margin-bottom:14px">
-      Tempo e peso são por unidade. Embalagem e mão de obra são do pedido inteiro.
+      Todos os valores abaixo são por unidade. O preço final é multiplicado pela quantidade.
     </div>
 
     <!-- Produto básico -->
@@ -324,14 +324,14 @@ option { background: #16181f; }
         </div>
       </div>
       <div class="field">
-        <label>Embalagem do Pedido</label>
+        <label>Embalagem por Unidade</label>
         <div class="iw">
           <div class="pfx">R$</div>
           <input type="number" id="embalagem" value="3" min="0" step="0.5" oninput="calc()">
         </div>
       </div>
       <div class="field">
-        <label>Outros Custos do Pedido</label>
+        <label>Outros Custos por Unidade</label>
         <div class="iw">
           <div class="pfx">R$</div>
           <input type="number" id="taxa_extra" value="0" min="0" step="1" oninput="calc()">
@@ -344,7 +344,7 @@ option { background: #16181f; }
       <div class="section-lbl">Mão de Obra — Impressão</div>
       <div class="grid2">
         <div class="field">
-          <label>Horas de Trabalho no Pedido</label>
+          <label>Horas de Trabalho por Unidade</label>
           <div class="iw">
             <input type="number" id="mdo_horas" value="0.5" min="0" step="0.25" oninput="calc()">
             <div class="sfx">h</div>
@@ -371,7 +371,7 @@ option { background: #16181f; }
       </div>
       <div id="pintura-campos" style="display:none">
         <div class="field">
-          <label>Horas de Pintura no Pedido</label>
+          <label>Horas de Pintura por Unidade</label>
           <div class="iw">
             <input type="number" id="pintura_horas" value="1" min="0" step="0.25" oninput="calc()">
             <div class="sfx">h</div>
@@ -505,14 +505,13 @@ function calcular(dados) {
   const markup = +dados.markup || 1;
   const taxaExtra = +dados.taxa_extra || 0;
 
-  const pesoTotal = peso * quantidade;
-  const tempoTotal = tempo * quantidade;
-  const material = (pesoTotal / 1000) * filamentoKg;
-  const energia = (valor('POTENCIA_IMPRESSORA_W') / 1000) * tempoTotal * valor('CUSTO_KWH');
+  // Tudo calculado para 1 unidade; o total do pedido é esse valor x quantidade.
+  const material = (peso / 1000) * filamentoKg;
+  const energia = (valor('POTENCIA_IMPRESSORA_W') / 1000) * tempo * valor('CUSTO_KWH');
 
   const vidaUtil = valor('VIDA_UTIL_IMPRESSORA_HORAS');
-  const deprec = vidaUtil ? (valor('VALOR_IMPRESSORA') / vidaUtil) * tempoTotal : 0;
-  const consumiveis = valor('CONSUMIVEIS_POR_HORA') * tempoTotal;
+  const deprec = vidaUtil ? (valor('VALOR_IMPRESSORA') / vidaUtil) * tempo : 0;
+  const consumiveis = valor('CONSUMIVEIS_POR_HORA') * tempo;
   const mdoImp = mdoHoras * mdoValor;
   const custoDireto = material + energia + deprec + consumiveis + embalagem + mdoImp;
 
@@ -527,7 +526,7 @@ function calcular(dados) {
     'OUTROS_CUSTOS_FIXOS',
   ].reduce((total, nome) => total + valor(nome), 0);
   const horasProdutivas = valor('HORAS_PRODUTIVAS_MENSAIS', 1) || 1;
-  const fixoDiss = (custosMensais / horasProdutivas) * tempoTotal;
+  const fixoDiss = (custosMensais / horasProdutivas) * tempo;
 
   const percentuaisPintura = {
     simples: valor('CONSUMO_PINTURA_SIMPLES_PCT', 5),
@@ -537,42 +536,42 @@ function calcular(dados) {
   let custoPintura = 0;
   if (pinturaTipo !== 'none') {
     const valorProdutosPintura = valor('TINTA_ACRILICA') + valor('PRIMER') + valor('VERNIZ');
-    const materiaisPintura = valorProdutosPintura * ((percentuaisPintura[pinturaTipo] || 0) / 100) * quantidade;
+    const materiaisPintura = valorProdutosPintura * ((percentuaisPintura[pinturaTipo] || 0) / 100);
     const maoDeObraPintura = pinturaHoras * valor('MAO_DE_OBRA_PINTURA_POR_HORA', 30);
     custoPintura = materiaisPintura + maoDeObraPintura;
   }
 
   const subtotal = custoDireto + fixoDiss + custoPintura + taxaExtra;
   const risco = subtotal * (valor('RISCO_FALHAS_PCT', 10) / 100);
-  const custoTotal = subtotal + risco;
-  const preco = custoTotal * markup;
-  const lucro = preco - custoTotal;
+  const custoTotalUnit = subtotal + risco;
+  const precoUnit = custoTotalUnit * markup;
+  const lucroUnit = precoUnit - custoTotalUnit;
 
   const taxaShopee = valor('PERCENTUAL_SHOPEE', 20) / 100;
   const taxaMl = valor('PERCENTUAL_MERCADO_LIVRE', 19) / 100;
-  const shopee = (preco + valor('TAXA_FIXA_SHOPEE', 7)) / (1 - taxaShopee);
-  const ml = preco / (1 - taxaMl);
+  const shopeeUnit = (precoUnit + valor('TAXA_FIXA_SHOPEE', 7)) / (1 - taxaShopee);
+  const mlUnit = precoUnit / (1 - taxaMl);
 
   return {
-    material: r2(material),
-    energia: r2(energia),
-    deprec: r2(deprec),
-    consumiveis: r2(consumiveis),
-    embalagem: r2(embalagem),
-    mdo_imp: r2(mdoImp),
-    fixo_diss: r2(fixoDiss),
-    pintura: r2(custoPintura),
-    taxa_extra: r2(taxaExtra),
-    risco: r2(risco),
-    custo_total: r2(custoTotal),
-    preco: r2(preco),
-    lucro: r2(lucro),
-    shopee: r2(shopee),
-    ml: r2(ml),
+    material: r2(material * quantidade),
+    energia: r2(energia * quantidade),
+    deprec: r2(deprec * quantidade),
+    consumiveis: r2(consumiveis * quantidade),
+    embalagem: r2(embalagem * quantidade),
+    mdo_imp: r2(mdoImp * quantidade),
+    fixo_diss: r2(fixoDiss * quantidade),
+    pintura: r2(custoPintura * quantidade),
+    taxa_extra: r2(taxaExtra * quantidade),
+    risco: r2(risco * quantidade),
+    custo_total: r2(custoTotalUnit * quantidade),
+    preco: r2(precoUnit * quantidade),
+    lucro: r2(lucroUnit * quantidade),
+    shopee: r2(shopeeUnit * quantidade),
+    ml: r2(mlUnit * quantidade),
     quantidade,
-    preco_unitario: r2(preco / quantidade),
-    shopee_unitario: r2(shopee / quantidade),
-    ml_unitario: r2(ml / quantidade),
+    preco_unitario: r2(precoUnit),
+    shopee_unitario: r2(shopeeUnit),
+    ml_unitario: r2(mlUnit),
   };
 }
 
@@ -615,6 +614,8 @@ function setPintura(el) {
 }
 
 // ── Orçamento ─────────────────────────────────────────────────
+const VALOR_TRABALHO_FRASE = 'Peça impressa em 3D artesanalmente, com acabamento manual e atenção aos detalhes.';
+
 function budgetData() {
   if (!lastResult) return null;
   return {
@@ -622,6 +623,7 @@ function budgetData() {
     produto: id('nome').value.trim() || 'Produto personalizado',
     quantidade: lastResult.quantidade,
     total: lastResult.preco,
+    unitario: lastResult.preco_unitario,
     pintura: pintura === 'none' ? '' : pintura,
   };
 }
@@ -635,7 +637,10 @@ function budgetText(d) {
     'Acabamento: limpeza da peça',
     ...(d.pintura ? ['Pintura: ' + pinturaLabel(d.pintura)] : []),
     'Quantidade: ' + d.quantidade,
+    ...(d.quantidade > 1 ? ['Valor por peça: ' + fmtR(d.unitario)] : []),
     'Valor total: ' + fmtR(d.total),
+    '',
+    VALOR_TRABALHO_FRASE,
     '',
     'Produção iniciada após a confirmação do pedido.',
   ].join('\n');
@@ -652,8 +657,10 @@ function openBudget() {
     <div><strong>Acabamento:</strong> limpeza da peça</div>
     ${d.pintura ? `<div><strong>Pintura:</strong> ${pinturaLabel(d.pintura)}</div>` : ''}
     <div><strong>Quantidade:</strong> ${d.quantidade}</div>
+    ${d.quantidade > 1 ? `<div><strong>Valor por peça:</strong> ${fmtR(d.unitario)}</div>` : ''}
     <div class="budget-total">Valor total: ${fmtR(d.total)}</div>
-    <div>Produção iniciada após a confirmação do pedido.</div>`;
+    <div style="margin-top:12px;font-style:italic;color:#555">${VALOR_TRABALHO_FRASE}</div>
+    <div style="margin-top:8px">Produção iniciada após a confirmação do pedido.</div>`;
   id('budget-overlay').classList.add('open');
 }
 
@@ -707,8 +714,8 @@ function controlText() {
     'Peso por unidade: ' + id('peso').value + ' g',
     'Peso estimado total: ' + fmtNumber((+id('peso').value || 0) * quantidade) + ' g',
     'Filamento: ' + fmtR(+id('filamento_kg').value || 0) + '/kg',
-    'Embalagem do pedido: ' + fmtR(+id('embalagem').value || 0),
-    'Outros custos do pedido: ' + fmtR(+id('taxa_extra').value || 0),
+    'Embalagem por unidade: ' + fmtR(+id('embalagem').value || 0),
+    'Outros custos por unidade: ' + fmtR(+id('taxa_extra').value || 0),
     'Mão de obra: ' + id('mdo_horas').value + ' h a ' + fmtR(+id('mdo_valor').value || 0) + '/h',
     'Pintura: ' + (pintura === 'none' ? 'Sem pintura' : pinturaLabel(pintura)),
     ...(pintura !== 'none' ? ['Horas de pintura: ' + id('pintura_horas').value + ' h'] : []),
